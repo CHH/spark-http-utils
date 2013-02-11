@@ -66,6 +66,8 @@ class UrlMap extends Middleware
                 );
 
                 $newRequest->attributes->add($request->attributes->all());
+
+                $newRequest->attributes->set('spark.url_map.path', $path);
                 $newRequest->attributes->set('spark.url_map.original_pathinfo', $request->getPathInfo());
                 $newRequest->attributes->set('spark.url_map.original_request_uri', $request->getRequestUri());
 

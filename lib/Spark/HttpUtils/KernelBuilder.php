@@ -7,7 +7,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 /**
  * Convenient builder for decorating objects implementing HttpKernelInterface
  */
-class KernelStack
+class KernelBuilder
 {
     /**
      * List of middleware specs, which consist of a class name
@@ -59,7 +59,7 @@ class KernelStack
      *              return new Response("Hello World");
      *         });
      *
-     * @return KernelStack
+     * @return KernelBuilder
      */
     function push()
     {
@@ -86,7 +86,7 @@ class KernelStack
      *
      * @param string $path Pattern for matching the path.
      * @param HttpKernelInterface|callable $block
-     * @return KernelStack
+     * @return KernelBuilder
      */
     function map($path, $block)
     {
