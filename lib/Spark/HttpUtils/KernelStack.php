@@ -12,6 +12,8 @@ class KernelStack
     /**
      * List of middleware specs, which consist of a class name
      * and optional constructor arguments.
+     *
+     * @var \SplStack
      */
     protected $middlewares;
 
@@ -83,7 +85,7 @@ class KernelStack
      * then this app gets run when the `$path` is matched.
      *
      * @param string $path Pattern for matching the path.
-     * @param HttpKernelInterface|callable
+     * @param HttpKernelInterface|callable $block
      * @return KernelStack
      */
     function map($path, $block)
@@ -101,6 +103,12 @@ class KernelStack
         return $this;
     }
 
+    /**
+     * Resolves the configured middleware component specs in LIFO order, instantiates them
+     * and returns the last middleware component.
+     *
+     * @return HttpKernelInterface
+     */
     function resolve()
     {
         $app = $this->app;

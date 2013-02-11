@@ -26,6 +26,12 @@ class CallableKernel implements HttpKernelInterface, TerminableInterface
      */
     protected $terminate;
 
+    /**
+     * Constructor
+     *
+     * @param callable $callback Callback run on `handle`
+     * @param callable $terminate Optional callback run on `terminate`
+     */
     function __construct($callback, $terminate = null)
     {
         $this->handle = $callback;
