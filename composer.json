@@ -1,0 +1,29 @@
+{
+    "name": "spark/http-utils",
+    "description": "Utilities for working with Symfony HttpFoundation, like tools to stack kernels.",
+    "authors": [
+        {
+            "name": "Christoph Hochstrasser",
+            "email": "christoph.hochstrasser@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "keywords": [
+        "http"
+    ],
+    "require": {
+        "php": ">=5.3.6",
+        "symfony/http-kernel": "~2.1"
+    },
+    "minimum-stability": "dev",
+    "require-dev": {
+        "chh/bob": "1.0.*@dev",
+        "phpunit/phpunit": "~3.7"
+    },
+    "autoload": {
+        "psr-0": {
+            "Spark\\HttpUtils\\": "lib\/"
+        }
+    }
+}
+
