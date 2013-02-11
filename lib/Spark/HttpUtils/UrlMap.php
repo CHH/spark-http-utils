@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
 /**
  * URL Map Middleware, which maps kernels to paths
  *
- * Maps kernels to path prefixes is insertable into a pipeline.
+ * Maps kernels to path prefixes and is insertable into a stack.
  *
  * @author Christoph Hochstrasser <christoph.hochstrasser@gmail.com>
  */
