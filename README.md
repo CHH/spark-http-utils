@@ -100,6 +100,7 @@ implement the [HttpKernelInterface][]:
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Spark\HttpUtils\CallableKernel;
 
 $app = new CallableKernel(function(Request $req) {
     return new Response("Hello from app!");
