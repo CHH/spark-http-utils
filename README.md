@@ -92,7 +92,7 @@ class MyFilter extends \Spark\HttpUtils\Filter
 }
 ```
 
-You can already use this to composer middlewares and applications which
+You can already use this to compose middlewares and applications which
 implement the [HttpKernelInterface][]:
 
 ```php
