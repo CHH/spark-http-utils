@@ -30,18 +30,9 @@ class UrlMap extends Middleware
     {
         # Sort paths by their length descending, so the most specific
         # paths go first.
-        uksort($map, function($a, $b) {
-            $lenA = strlen($a);
-            $lenB = strlen($b);
+        $lengths = array_map('strlen', array_keys($map));
 
-            if ($lenA < $lenB) {
-                return 1;
-            } else if ($lenA === $lenB) {
-                return 0;
-            } else if ($lenA > $lenB) {
-                return -1;
-            }
-        });
+        array_multisort($lengths, SORT_DESC, $map);
 
         $this->map = $map;
     }
