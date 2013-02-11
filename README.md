@@ -85,8 +85,31 @@ class MyFilter extends \Spark\HttpUtils\Filter
 
     function after(Request $request, Response $response)
     {
+        $response->setContent(
+            $response->getContent() . "\n" . "Hello from filter!"
+        );
     }
 }
+```
+
+You can already use this to composer middlewares and applications which
+implement the [HttpKernelInterface][]:
+
+```php
+<?php
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+$app = new CallableKernel(function(Request $req) {
+    return new Response("Hello from app!");
+});
+
+$app = new MyFilter($app);
+$app->handle(Request::createFromGlobals())->send();
+# Output:
+# Hello from app!
+# Hello from filter!
 ```
 
 ### `KernelStack`
