@@ -10,7 +10,7 @@ Get [composer]:
 
 Install `spark/http-utils` package:
 
-    $ php composer.phar require spark/http-utils:*@dev
+    $ php composer.phar require spark/http-utils:~0.1
 
 [composer]: http://getcomposer.org
 
