@@ -45,11 +45,15 @@ class KernelBuilderTest extends \PHPUnit_Framework_TestCase
             ->push('\Spark\HttpUtils\Test\TestMiddleware2')
             ->run($app);
 
+        $app2 = new TestMiddleware1(new TestMiddleware2($app));
+        $resp2 = $app2->handle(new Request);
+
         $app = $builder->resolve();
 
         $resp = $app->handle(new Request);
 
         $this->assertEquals("Hello World\nBar\nFoo", $resp->getContent());
+        $this->assertEquals($resp->getContent(), $resp2->getContent());
     }
 
     function testMap()
