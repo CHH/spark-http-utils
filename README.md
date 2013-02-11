@@ -113,9 +113,93 @@ $app->handle(Request::createFromGlobals())->send();
 # Hello from filter!
 ```
 
-### `KernelStack`
+This is a bit unconvenient, but works. For more convenience a `KernelBuilder` class is provided.
+
+### `KernelBuilder`
+
+The KernelBuilder provides a more convenient API to compose objects implementing the [HttpKernelInterface][].
+
+Middleware components can be added by calling the `push` method. The previous example for composing middlewares
+could be rewritten, using the KernelBuilder, in the following way:
+
+```php
+<?php
+
+use Spark\HttpUtils\KernelBuilder;
+
+$builder = new KernelBuilder;
+$builder->push('MyFilter');
+$builder->run($app);
+
+$app = $builder->resolve();
+```
+
+The app passed to `run` is always used as the first element in the chain of middleware components. So
+requests flow downward towards the application, while responses bubble upwards from the application. 
+
+The KernelBuilder can also be used to map sub paths to `HttpKernelInterface` instances. This kernels then
+receive the path sans the sub path as their request's path info and request URI. The original values can still
+be retrieved via the `spark.url_map.original_pathinfo` and `spark.url_map.original_pathinfo` request attributes.
+
+The sub path in which the app is mapped to can be retrieved via the `spark.url_map.path` request attribute.
+
+```php
+<?php
+
+$foo = new CallableKernel(function($req) {
+    return new Response(sprintf(
+        "Hello from sub app at '%s'!", $req->attributes->get('spark.url_map.path')
+    ));
+});
+
+$builder->map('/foo', $foo);
+```
+
+The sub paths can also make use of middleware components by using `map` with a callback, which gets
+passed a fresh builder.
+
+```php
+$builder->map('/foo', function($builder) {
+    $builder->push("MyFilter");
+    
+    $builder->run(new CallableKernel(function($req) {
+        return new Response("Hello from sub app!");
+    });
+});
+```
 
 ### `CallableKernel`
+
+The `Spark\HttpUtils\CallableKernel` class makes a plain callback into an app which implements
+the [HttpKernelInterface][]. This is very useful for testing, or writing simple apps.
+
+```php
+<?php
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+use Spark\HttpUtils\CallableKernel;
+
+$handle = function(Request $req) {
+    return new Response("Hello World");
+};
+
+$app = new CallableKernel($handle);
+```
+
+The CallableKernel also implements the `TerminableInterface`. To register a callback for the `terminate`
+method call, pass a callable as second argument to the constructor.
+
+```php
+<?php
+
+$terminate = function(Request $req, Response $resp) {
+    # Gets run when the app's `terminate` method gets called.
+};
+
+$app = new CallableKernel($handle, $terminate);
+```
 
 ## Thanks
 
