@@ -14,7 +14,7 @@ Install `spark/http-utils` package:
 
 [composer]: http://getcomposer.org
 
-## Get Started
+## Getting Started
 
 ### What is a Middleware Component?
 
