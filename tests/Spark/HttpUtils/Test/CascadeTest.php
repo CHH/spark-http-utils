@@ -12,11 +12,7 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
 {
     function testCascade()
     {
-        $app = new CallableKernel(function() {
-            return new Response("Fallback!");
-        });
-
-        $cascade = new Cascade($app, array(
+        $cascade = new Cascade(array(
             new CallableKernel(function() {
                 return new Response("Handler1", 404);
             }),
@@ -32,11 +28,7 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
 
     function testConfigureStatusCodes()
     {
-        $app = new CallableKernel(function() {
-            return new Response("Fallback!");
-        });
-
-        $cascade = new Cascade($app, array(
+        $cascade = new Cascade(array(
             new CallableKernel(function() {
                 return new Response("Handler1", 404);
             }),

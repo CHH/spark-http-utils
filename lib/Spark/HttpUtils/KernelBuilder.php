@@ -24,7 +24,7 @@ class KernelBuilder
     protected $map = array();
 
     /**
-     * The original app, which gets run last.
+     * The original app, which gets run first.
      */
     protected $app;
 
