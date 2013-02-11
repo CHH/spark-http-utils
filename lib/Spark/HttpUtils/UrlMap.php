@@ -40,14 +40,13 @@ class UrlMap extends Middleware
     function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
         foreach ($this->map as $path => $app) {
-            $matcher = new RequestMatcher;
-            $matcher->matchPath($path);
+            $path = str_replace('#', '\\#', $path);
 
-            if ($matcher->matches($request)) {
+            if (preg_match("#{$path}#", rawurldecode($request->getPathInfo()), $matches)) {
                 $originalRequestUri = $request->getRequestUri();
 
                 $newRequest = Request::create(
-                    substr(rawurldecode($originalRequestUri), strlen($path)),
+                    substr(rawurldecode($originalRequestUri), strlen($matches[0])),
                     $request->getMethod(),
                     $request->query->all(),
                     $request->cookies->all(),
