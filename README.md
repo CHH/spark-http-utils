@@ -159,14 +159,14 @@ $foo = new CallableKernel(function($req) {
     ));
 });
 
-$stack->map('/foo', $foo);
+$stack->map('^/foo', $foo);
 ```
 
 The sub paths can also make use of middleware components by using `map` with a callback, which gets
 passed a fresh builder and must return the app to use for the path.
 
 ```php
-$stack->map('/foo', function($stack) {
+$stack->map('^/foo', function($stack) {
     $app = new CallableKernel(function($req) {
         return new Response("Hello from sub app!");
     });
