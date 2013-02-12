@@ -17,7 +17,7 @@ class UrlMapTest extends \PHPUnit_Framework_TestCase
 
         $urlMap = new UrlMap($app);
         $urlMap->setMap(array(
-            '/foo' => new CallableKernel(function(Request $req) {
+            '^/foo' => new CallableKernel(function(Request $req) {
                 return new Response('foo');
             })
         ));
@@ -38,7 +38,7 @@ class UrlMapTest extends \PHPUnit_Framework_TestCase
 
         $urlMap = new UrlMap($app);
         $urlMap->setMap(array(
-            '/foo' => new CallableKernel(function(Request $req) use ($test) {
+            '^/foo' => new CallableKernel(function(Request $req) use ($test) {
                 $test->assertEquals('/foo', $req->attributes->get('spark.url_map.original_pathinfo'));
                 $test->assertEquals('/foo?bar=baz', $req->attributes->get('spark.url_map.original_request_uri'));
                 $test->assertEquals('/', $req->getPathinfo());
