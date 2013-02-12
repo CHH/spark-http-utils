@@ -113,31 +113,38 @@ $app->handle(Request::createFromGlobals())->send();
 # Hello from filter!
 ```
 
-This is a bit unconvenient, but works. For more convenience a `KernelBuilder` class is provided.
+This is a bit unconvenient, but works. For more convenience a `Stack` class is provided.
 
-### `KernelBuilder`
+### `Stack`
 
-The KernelBuilder provides a more convenient API to compose objects implementing the [HttpKernelInterface][].
+The Stack provides a more convenient API to compose objects implementing the [HttpKernelInterface][].
 
 Middleware components can be added by calling the `push` method. The previous example for composing middlewares
-could be rewritten, using the KernelBuilder, in the following way:
+could be rewritten, using the Stack, in the following way:
 
 ```php
 <?php
 
-use Spark\HttpUtils\KernelBuilder;
+use Spark\HttpUtils\Stack;
+use Spark\HttpUtils\CallableKernel;
 
-$builder = new KernelBuilder;
-$builder->push('MyFilter');
-$builder->run($app);
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-$app = $builder->resolve();
+$app = new CallableKernel(function(Request $req) {
+    return new Response("Hello from app!");
+});
+
+$stack = new Stack;
+$stack->push('MyFilter');
+
+$app = $stack->resolve($app);
 ```
 
-The app passed to `run` is always used as the first element in the chain of middleware components. So
+The app passed to `resolve` is always used as the first element in the chain of middleware components. So
 requests flow downward towards the application, while responses bubble upwards from the application. 
 
-The KernelBuilder can also be used to map sub paths to `HttpKernelInterface` instances. This kernels then
+The Stack can also be used to map sub paths to `HttpKernelInterface` instances. This kernels then
 receive the path sans the sub path as their request's path info and request URI. The original values can still
 be retrieved via the `spark.url_map.original_pathinfo` and `spark.url_map.original_pathinfo` request attributes.
 
@@ -152,17 +159,17 @@ $foo = new CallableKernel(function($req) {
     ));
 });
 
-$builder->map('/foo', $foo);
+$stack->map('/foo', $foo);
 ```
 
 The sub paths can also make use of middleware components by using `map` with a callback, which gets
-passed a fresh builder.
+passed a fresh builder and must return the app to use for the path.
 
 ```php
-$builder->map('/foo', function($builder) {
-    $builder->push("MyFilter");
+$stack->map('/foo', function($stack) {
+    $stack->push("MyFilter");
     
-    $builder->run(new CallableKernel(function($req) {
+    return $stack->resolve(new CallableKernel(function($req) {
         return new Response("Hello from sub app!");
     });
 });
