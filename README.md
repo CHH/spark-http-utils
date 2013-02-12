@@ -144,6 +144,8 @@ $app = $stack->resolve($app);
 The app passed to `resolve` is always used as the first element in the chain of middleware components. So
 requests flow downward towards the application, while responses bubble upwards from the application. 
 
+#### Mapping apps to sub paths
+
 The Stack can also be used to map sub paths to `HttpKernelInterface` instances. This kernels then
 receive the path sans the sub path as their request's path info and request URI. The original values can still
 be retrieved via the `spark.url_map.original_pathinfo` and `spark.url_map.original_pathinfo` request attributes.
