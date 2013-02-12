@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use Spark\HttpUtils\CallableKernel;
-use Spark\HttpUtils\KernelBuilder;
+use Spark\HttpUtils\Stack;
 use Spark\HttpUtils\Middleware;
 
 class TestMiddleware1 extends Middleware
@@ -32,7 +32,7 @@ class TestMiddleware2 extends Middleware
     }
 }
 
-class KernelBuilderTest extends \PHPUnit_Framework_TestCase
+class StackTest extends \PHPUnit_Framework_TestCase
 {
     function test()
     {
@@ -40,15 +40,14 @@ class KernelBuilderTest extends \PHPUnit_Framework_TestCase
             return new Response("Hello World");
         });
 
-        $builder = KernelBuilder::build()
+        $builder = Stack::build()
             ->push('\Spark\HttpUtils\Test\TestMiddleware1')
-            ->push('\Spark\HttpUtils\Test\TestMiddleware2')
-            ->run($app);
+            ->push('\Spark\HttpUtils\Test\TestMiddleware2');
 
         $app2 = new TestMiddleware1(new TestMiddleware2($app));
         $resp2 = $app2->handle(new Request);
 
-        $app = $builder->resolve();
+        $app = $builder->resolve($app);
 
         $resp = $app->handle(new Request);
 
@@ -62,18 +61,18 @@ class KernelBuilderTest extends \PHPUnit_Framework_TestCase
             return new Response("Hello World");
         });
 
-        $builder = KernelBuilder::build()
+        $builder = Stack::build()
             ->map('/foo', function($s) {
                 $app = new CallableKernel(function() {
                     return new Response("Hello sub!");
                 });
 
                 $s->push('\Spark\HttpUtils\Test\TestMiddleware1');
-                $s->run($app);
-            })
-            ->run($app);
 
-        $app = $builder->resolve();
+                return $s->resolve($app);
+            });
+
+        $app = $builder->resolve($app);
 
         $response = $app->handle(Request::create('/foo/bar'));
         $this->assertEquals("Hello sub!\nFoo", $response->getContent());

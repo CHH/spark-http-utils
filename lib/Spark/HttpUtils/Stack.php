@@ -7,7 +7,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 /**
  * Convenient builder for decorating objects implementing HttpKernelInterface
  */
-class KernelBuilder
+class Stack
 {
     /**
      * List of middleware specs, which consist of a class name
@@ -22,11 +22,6 @@ class KernelBuilder
      * by the UrlMap Middleware Component
      */
     protected $map = array();
-
-    /**
-     * The original app, which gets run first.
-     */
-    protected $app;
 
     static function build()
     {
@@ -69,13 +64,6 @@ class KernelBuilder
         return $this;
     }
 
-    function run(HttpKernelInterface $app)
-    {
-        $this->app = $app;
-
-        return $this;
-    }
-
     /**
      * Maps a path to an app.
      *
@@ -94,8 +82,7 @@ class KernelBuilder
             $app = $block;
         } elseif (is_callable($block)) {
             $stack = new static;
-            $block($stack);
-            $app = $stack->resolve();
+            $app = $block($stack);
         }
 
         $this->map[$path] = $app;
@@ -109,14 +96,8 @@ class KernelBuilder
      *
      * @return HttpKernelInterface
      */
-    function resolve()
+    function resolve(HttpKernelInterface $app)
     {
-        $app = $this->app;
-
-        if ($app === null) {
-            throw new \UnexpectedValueException('No app set. Ensure you have called the run() method');
-        }
-
         foreach ($this->middlewares as $spec) {
             $kernelClass = array_shift($spec);
             array_unshift($spec, $app);
