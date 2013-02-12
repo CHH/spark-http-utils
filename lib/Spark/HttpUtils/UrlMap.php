@@ -27,10 +27,12 @@ class UrlMap extends Middleware
 
     function setMap(array $map)
     {
-        # Sort paths by their length descending, so the most specific
-        # paths go first.
+        # Collect an array of all key lengths
         $lengths = array_map('strlen', array_keys($map));
 
+        # Sort paths by their length descending, so the most specific
+        # paths go first. `array_multisort` sorts the lengths descending and
+        # uses the order on the $map
         array_multisort($lengths, SORT_DESC, $map);
 
         $this->map = $map;
