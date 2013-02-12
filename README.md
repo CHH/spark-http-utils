@@ -167,11 +167,13 @@ passed a fresh builder and must return the app to use for the path.
 
 ```php
 $stack->map('/foo', function($stack) {
-    $stack->push("MyFilter");
-    
-    return $stack->resolve(new CallableKernel(function($req) {
+    $app = new CallableKernel(function($req) {
         return new Response("Hello from sub app!");
     });
+
+    $stack->push("MyFilter");
+    
+    return $stack->resolve($app);
 });
 ```
 
