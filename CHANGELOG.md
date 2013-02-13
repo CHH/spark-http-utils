@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.2.0 - 2013-xx-xx
+## 0.3.0 - 2013-xx-xx
+
+* Move `Middleware` and `Filter` classes to `Spark\HttpUtils\Middleware`
+  namespace
+* Add `Config` middleware
+
+## 0.2.0 - 2013-02-12
 
 * `KernelBuilder`: Removed `->run()`, pass the app to `resolve` instead
 * `KernelBuilder`: Renamed `KernelBuilder` to `Stack`

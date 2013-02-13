@@ -50,7 +50,7 @@ class MyMiddleware implements HttpKernelInterface
 }
 ```
 
-The `Spark\HttpUtils\Middleware` base class is provided for convenience.
+The `Spark\HttpUtils\Middleware\Middleware` base class is provided for convenience.
 
 ```php
 <?php
@@ -58,7 +58,7 @@ The `Spark\HttpUtils\Middleware` base class is provided for convenience.
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class MyMiddleware extends \Spark\HttpUtils\Middleware
+class MyMiddleware extends \Spark\HttpUtils\Middleware\Middleware
 {
     function handle(Request $request, $type = HttpKernel::MASTER_REQUEST, $catch = true)
     {
@@ -68,7 +68,7 @@ class MyMiddleware extends \Spark\HttpUtils\Middleware
 ```
 
 Because writing Middleware components which intercept requests, or
-intercept responses is a common use case, a `Spark\HttpUtils\Filter`
+intercept responses is a common use case, a `Spark\HttpUtils\Middleware\Filter`
 base class is also provided for convenience.
 
 ```php
@@ -77,7 +77,7 @@ base class is also provided for convenience.
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class MyFilter extends \Spark\HttpUtils\Filter
+class MyFilter extends \Spark\HttpUtils\Middleware\Filter
 {
     function before(Request $request)
     {

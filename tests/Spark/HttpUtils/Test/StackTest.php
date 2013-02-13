@@ -8,7 +8,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use Spark\HttpUtils\CallableKernel;
 use Spark\HttpUtils\Stack;
-use Spark\HttpUtils\Middleware;
+use Spark\HttpUtils\Middleware\Middleware;
 
 class TestMiddleware1 extends Middleware
 {

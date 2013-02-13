@@ -1,6 +1,6 @@
 <?php
 
-namespace Spark\HttpUtils;
+namespace Spark\HttpUtils\Middleware;
 
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\TerminableInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Spark\HttpUtils;
+namespace Spark\HttpUtils\Middleware;
 
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\TerminableInterface;
@@ -53,8 +53,10 @@ abstract class Filter extends Middleware
 
         $response = $this->app->handle($request, $type, $catch);
 
-        if ($afterResponse = $this->after($request, $response) and $afterResponse instanceof Response) {
-            return $afterResponse;
+        if ($response instanceof Response) {
+            if ($afterResponse = $this->after($request, $response) and $afterResponse instanceof Response) {
+                return $afterResponse;
+            }
         }
 
         return $response;

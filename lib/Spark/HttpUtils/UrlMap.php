@@ -5,6 +5,8 @@ namespace Spark\HttpUtils;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+use Spark\HttpUtils\Middleware\Middleware;
+
 /**
  * URL Map Middleware, which maps kernels to paths
  *
