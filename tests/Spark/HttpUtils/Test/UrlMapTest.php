@@ -43,12 +43,13 @@ class UrlMapTest extends \PHPUnit_Framework_TestCase
                 $test->assertEquals('/foo?bar=baz', $req->attributes->get('spark.url_map.original_request_uri'));
                 $test->assertEquals('/', $req->getPathinfo());
 
+                $test->assertEquals('/foo', $req->getBaseUrl());
+
                 return new Response("Hello World");
             })
         ));
 
-        $req = Request::create('/foo?bar=baz');
-        $resp = $urlMap->handle($req);
+        $resp = $urlMap->handle(Request::create('/foo?bar=baz'));
 
         $this->assertEquals('Hello World', $resp->getContent());
     }
