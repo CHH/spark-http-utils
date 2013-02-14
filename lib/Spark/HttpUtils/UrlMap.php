@@ -7,6 +7,14 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Spark\HttpUtils\Middleware\Middleware;
 
+class UrlMapRequest extends Request
+{
+    function setBaseUrl($baseUrl)
+    {
+        $this->baseUrl = $baseUrl;
+    }
+}
+
 /**
  * URL Map Middleware, which maps kernels to paths
  *
@@ -46,10 +54,8 @@ class UrlMap extends Middleware
             $path = str_replace('#', '\\#', $path);
 
             if (preg_match("#{$path}#", rawurldecode($request->getPathInfo()), $matches)) {
-                $originalRequestUri = $request->getRequestUri();
-
-                $newRequest = Request::create(
-                    substr(rawurldecode($originalRequestUri), strlen($matches[0])),
+                $newRequest = UrlMapRequest::create(
+                    $request->getRequestUri(),
                     $request->getMethod(),
                     $request->query->all(),
                     $request->cookies->all(),
@@ -58,9 +64,10 @@ class UrlMap extends Middleware
                     $request->getContent()
                 );
 
+                $newRequest->setBaseUrl($matches[0]);
                 $newRequest->attributes->add($request->attributes->all());
 
-                $newRequest->attributes->set('spark.url_map.path', $path);
+                $newRequest->attributes->set('spark.url_map.path', rawurldecode($matches[0]));
                 $newRequest->attributes->set('spark.url_map.original_pathinfo', $request->getPathInfo());
                 $newRequest->attributes->set('spark.url_map.original_request_uri', $request->getRequestUri());
 
