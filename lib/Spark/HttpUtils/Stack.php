@@ -44,15 +44,18 @@ class Stack
      *
      *     <?php
      *
-     *     $foo = new CallableKernel(function($req) {
-     *         return new Response("Foo!");
+     *     $app = new CallableKernel(function($req) {
+     *         return new Response("Root App!");
      *     });
      *
-     *     $stack = KernelStack::build()
-     *         ->push("\\Spark\\HttpUtils\\UrlMap", array('/foo' => $foo))
-     *         ->run(new CallableKernel(function($req) {
-     *              return new Response("Hello World");
-     *         });
+     *     $sub = new CallableKernel(function($req) {
+     *         return new Response("Sub App!");
+     *     });
+     *
+     *     $stack = Stack::build()
+     *         ->push("\\Spark\\HttpUtils\\UrlMap", array('^/foo' => $sub));
+     *      
+     *     $app = $stack->resolve($app);
      *
      * @return KernelBuilder
      */
@@ -68,8 +71,10 @@ class Stack
      * Maps a path to an app.
      *
      * If called with a callable as second argument, then the callable is passed a new
-     * instance of the KernelStack, which can be used to set middleware and the app which
-     * gets used if the `$path` is matched. If the second argument is an instance of HttpKernelInterface,
+     * instance of the Stack, which can be used to set middleware and the app which
+     * gets used if the `$path` is matched. The block must return an app.
+     *
+     * If the second argument is an instance of HttpKernelInterface,
      * then this app gets run when the `$path` is matched.
      *
      * @param string $path Pattern for matching the path.
@@ -83,6 +88,10 @@ class Stack
         } elseif (is_callable($block)) {
             $stack = new static;
             $app = $block($stack);
+
+            if (!$app instanceof HttpKernelInterface) {
+                throw new \UnexpectedValueException("Callable must return an instance of HttpKernelInterface");
+            }
         }
 
         $this->map[$path] = $app;
@@ -98,19 +107,23 @@ class Stack
      */
     function resolve(HttpKernelInterface $app)
     {
+        $middlewares = array($app);
+
         foreach ($this->middlewares as $spec) {
             $kernelClass = array_shift($spec);
             array_unshift($spec, $app);
 
             $r = new \ReflectionClass($kernelClass);
             $app = $r->newInstanceArgs($spec);
+
+            array_unshift($middlewares, $app);
         }
 
         if ($this->map) {
             $app = new UrlMap($app, $this->map);
         }
 
-        return $app;
+        return new StackedHttpKernel($app, $middlewares);
     }
 }
 

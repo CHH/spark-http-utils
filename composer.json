@@ -15,10 +15,10 @@
         "php": ">=5.3.6",
         "symfony/http-kernel": "~2.1"
     },
-    "minimum-stability": "dev",
     "require-dev": {
         "chh/bob": "1.0.*@dev",
-        "phpunit/phpunit": "~3.7"
+        "phpunit/phpunit": "~3.7",
+        "silex/silex": "1.0.*@dev"
     },
     "autoload": {
         "psr-0": {
